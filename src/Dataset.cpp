@@ -1,10 +1,10 @@
 #include "Dataset.h"
 #include "Helpers.h"
-
+#include "blosc_helpers.h"
 using namespace H5;
 using namespace Rcpp;
 using namespace std;
-
+// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::export]]
 bool WriteDataset(XPtr<DataSet> dataset, XPtr<DataSpace> dataspace, SEXP mat,
 		char datatype, NumericVector count) {
@@ -99,18 +99,28 @@ XPtr<DataSet> CreateDataset(XPtr<CommonFG> file, string datasetname, char dataty
 
     DSetCreatPropList prop;
     DataSpace dataspace(dimensions.length(), &dims[0]);
-
+    
     if (!R_IsNA(chunksize[0])) {
-    	for(int i = 0; i < rank; i++) {
-		  if (R_IsNA(maxshape[i])) {
-			 maxdims[i] = H5S_UNLIMITED;
-		  }
-		}
-		// Create the data space for the dataset.
-		dataspace.setExtentSimple(dimensions.length(), &dims[0], &maxdims[0]);
-    	vector<hsize_t> chunk_dims(chunksize.begin(), chunksize.end());
-    	prop.setChunk(rank, &chunk_dims[0]);
-    	prop.setDeflate(compressionlevel);
+      for(int i = 0; i < rank; i++) {
+        if (R_IsNA(maxshape[i])) {
+          maxdims[i] = H5S_UNLIMITED;
+        }
+      }
+      // Create the data space for the dataset.
+      dataspace.setExtentSimple(dimensions.length(), &dims[0], &maxdims[0]);
+      
+      vector<hsize_t> chunk_dims(chunksize.begin(), chunksize.end());
+      prop.setChunk(rank, &chunk_dims[0]);
+      char* version;
+      char* date;
+      int r=0;
+      unsigned int cd_values[7];
+      r = register_blosc(&version,&date);
+      cd_values[4]=compressionlevel;
+      cd_values[5]=1;
+      cd_values[6]=BLOSC_BLOSCLZ;
+      prop.setFilter(FILTER_BLOSC,H5Z_FLAG_OPTIONAL,7,cd_values);
+//      prop.setDeflate(compressionlevel);
     }
 
     if(size > 0) { // Adjust for null-termination character
@@ -190,6 +200,11 @@ CharacterVector GetDataSetCompression(XPtr<DataSet> dataset) {
   unsigned  flags, filter_info, cd_values[1];
   char name[1];
   H5Z_filter_t filter_type;
+  
+  char* version;
+  char* date;
+  int r= register_blosc(&version,&date);
+//  Rcout<<"Blosc version:"<<version<<" date:"<<date<<std::endl;
 
   CharacterVector outvec(numfilt);
 
@@ -197,15 +212,17 @@ CharacterVector GetDataSetCompression(XPtr<DataSet> dataset) {
       nelmts = 0;
       filter_type = cparms.getFilter(i, flags, nelmts, cd_values, namelen, name , filter_info);
       switch (filter_type) {
-        case H5Z_FILTER_DEFLATE:
-          outvec(i) = "H5Z_FILTER_DEFLATE";
-          break;
-        case H5Z_FILTER_SZIP:
-          outvec(i) = "H5Z_FILTER_SZIP";
-          break;
-        default:
-          outvec(i) = "UNKNOWN";
-        }
+      case H5Z_FILTER_DEFLATE:
+        outvec(i) = "H5Z_FILTER_DEFLATE";
+        break;
+      case H5Z_FILTER_SZIP:
+        outvec(i) = "H5Z_FILTER_SZIP";
+        break;
+      case (H5Z_filter_t)FILTER_BLOSC:
+        outvec(i) = "H5Z_FILTER_BLOSC";
+      default:
+        outvec(i) = to_string((int)filter_type);
+      }
   }
   return outvec;
 }

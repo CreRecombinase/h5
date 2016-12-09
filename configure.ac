@@ -36,7 +36,7 @@ if test -z "${LIBS}"; then
   ]
   
   dnl Fix for newer Debian versions
-  LIBS="${LIBS} -L. -lhdf5_cpp -lhdf5 -lz -lm"
+  LIBS="${LIBS} -L. -lhdf5_cpp -lhdf5 -lz -lm -lblosc"
 
 fi
 

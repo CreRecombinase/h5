@@ -1,6 +1,6 @@
 #include <H5Cpp.h>
 #include <Rcpp.h>
-
+// [[Rcpp::interfaces(r, cpp)]]
 #ifndef __Group_h__
 #define __Group_h__
 // File functions

@@ -1,6 +1,6 @@
 #include <H5Cpp.h>
 #include <Rcpp.h>
-
+// [[Rcpp::interfaces(r, cpp)]]
 #ifndef __Dataset_h__
 #define __Dataset_h__
 

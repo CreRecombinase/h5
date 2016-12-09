@@ -1,5 +1,5 @@
 #include "File.h"
-
+// [[Rcpp::interfaces(r, cpp)]]
 using namespace H5;
 using namespace Rcpp;
 using namespace std;
