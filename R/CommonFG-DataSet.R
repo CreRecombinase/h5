@@ -227,7 +227,7 @@ setGeneric("list.datasets", function(.Object, path = "/",
 setMethod("list.datasets", signature(.Object="CommonFG"), 
   function(.Object, path, full.names, recursive, follow.links) {
     if (!existsGroup(.Object, path)) {
-      stop("Specified path does not exist")
+      stop(paste0("Specified path does not exist"))
     }
     # Set full path
     path.full <- path

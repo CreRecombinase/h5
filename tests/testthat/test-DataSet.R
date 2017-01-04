@@ -46,7 +46,7 @@ test_that("DataSet-createDataset-chunksize",{
   ds_chunk <- createDataSet(file, datasetname = "dset2", data = 1:3)
   expect_that(ds_chunk@chunksize, is_identical_to(3))
   expect_that(ds_chunk@maxdim, is_more_than(1e+19))
-  expect_that(ds_chunk@compression , is_identical_to("H5Z_FILTER_DEFLATE"))
+  expect_that(ds_chunk@compression , is_identical_to("32001"))
   expect_that(ds_chunk@datatype, is_identical_to("i"))
   h5close(ds_chunk)
   h5close(file)

@@ -116,6 +116,7 @@ XPtr<DataSet> CreateDataset(XPtr<CommonFG> file, string datasetname, char dataty
       int r=0;
       unsigned int cd_values[7];
       r = register_blosc(&version,&date);
+      Rcout<<"blosc verseion:"<<version<<std::endl;
       cd_values[4]=compressionlevel;
       cd_values[5]=1;
       cd_values[6]=BLOSC_BLOSCLZ;
@@ -126,19 +127,22 @@ XPtr<DataSet> CreateDataset(XPtr<CommonFG> file, string datasetname, char dataty
     if(size > 0) { // Adjust for null-termination character
 	  size += 1;
 	}
+    Rcout<<"Checking data type"<<std::endl;
     DataType dsettype = GetDataType(GetTypechar(datatype), size);
-
+    Rcout<<"Creating  data set "<<datasetname.c_str()<<std::endl;
     DataSet dataset = file->createDataSet(datasetname.c_str(),
     		dsettype, dataspace, prop);
 
     dsettype.close();
     prop.close();
     dataspace.close();
-
+    Rcout<<"Checking for errors"<<std::endl;
     if (dataset.getId() == -1) {
+      Rcout<<"Dataset not created"<<std::endl;
       dataset.close();
       throw Rcpp::exception("Creation of DataSet failed.");
     }
+    Rcout<<"No errors found!"<<std::endl;
     return XPtr<DataSet>(new DataSet(dataset));
   } catch(Exception& error) {
     string msg = error.getDetailMsg() + " in " + error.getFuncName();
