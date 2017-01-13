@@ -59,7 +59,7 @@ if test -z "${CPPFLAGS}"; then
   [
   CPPFLAGS=`${H5CPP} -show -c myconftest.cpp | ${GREP} -o "\-I[^[:space:]]\+" | tr "\n" " "`
   ]
-
+  CPPFLAGS="${CPPFLAGS} -${HOME}/include"
   rm -f myconftest.cpp
 fi
 
