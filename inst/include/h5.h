@@ -1,10 +1,10 @@
-#ifndef RCPP_h5_H_GEN_
-#define RCPP_h5_H_GEN_
-#include <H5Cpp.h>
+#include "H5Cpp.h"
 #include "Rcpp.h"
+
+#ifndef __h5_h__
+#define __h5_h__
 using namespace H5;
 using namespace Rcpp;
 using namespace std;
-#include "h5_RcppExports.h"
+#endif // __h5_h__
 
-#endif // RCPP_h5_H_GEN_

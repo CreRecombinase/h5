@@ -1,6 +1,5 @@
 #include <H5Cpp.h>
 #include <Rcpp.h>
-// [[Rcpp::interfaces(r, cpp)]]
 #ifndef __Attribute_h__
 #define __Attribute_h__
 // Attribute functions

@@ -1,5 +1,5 @@
 #include "File.h"
-// [[Rcpp::interfaces(r, cpp)]]
+#include "blosc_helpers.h"
 using namespace H5;
 using namespace Rcpp;
 using namespace std;
@@ -18,6 +18,10 @@ bool file_exist (const std::string& name) {
 XPtr<H5File> OpenFile(string filePath, string mode) {
   try {
     Exception::dontPrint();
+    char* version;
+    char* date;
+    int r=0;
+    r = register_blosc(&version,&date);
     map<std::string, unsigned int> filemodes;
     filemodes["r"] = H5F_ACC_RDONLY;
     filemodes["r+"] = H5F_ACC_RDWR;

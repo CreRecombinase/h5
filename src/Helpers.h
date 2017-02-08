@@ -1,6 +1,6 @@
 #include <H5Cpp.h>
 #include <Rcpp.h>
-// [[Rcpp::interfaces(r, cpp)]]
+
 #ifndef __Helpers_h__
 #define __Helpers_h__
 enum DTYPE { T_DOUBLE, T_INTEGER, T_LOGICAL, T_CHARACTER, T_VLEN_FLOAT,

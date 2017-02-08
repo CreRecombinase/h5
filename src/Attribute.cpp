@@ -1,7 +1,7 @@
 #include "Attribute.h"
 #include "Helpers.h"
 
-// [[Rcpp::interfaces(r, cpp)]]
+
 using namespace Rcpp;
 using namespace H5;
 using namespace std;

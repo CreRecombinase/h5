@@ -1,10 +1,11 @@
 #include "Dataset.h"
 #include "Helpers.h"
 #include "blosc_helpers.h"
+
 using namespace H5;
 using namespace Rcpp;
 using namespace std;
-// [[Rcpp::interfaces(r, cpp)]]
+
 // [[Rcpp::export]]
 bool WriteDataset(XPtr<DataSet> dataset, XPtr<DataSpace> dataspace, SEXP mat,
 		char datatype, NumericVector count) {
@@ -115,34 +116,36 @@ XPtr<DataSet> CreateDataset(XPtr<CommonFG> file, string datasetname, char dataty
       char* date;
       int r=0;
       unsigned int cd_values[7];
-      r = register_blosc(&version,&date);
-      Rcout<<"blosc verseion:"<<version<<std::endl;
-      cd_values[4]=compressionlevel;
-      cd_values[5]=1;
-      cd_values[6]=BLOSC_BLOSCLZ;
-      prop.setFilter(FILTER_BLOSC,H5Z_FLAG_OPTIONAL,7,cd_values);
-//      prop.setDeflate(compressionlevel);
+        r = register_blosc(&version,&date);
+//        Rcout<<"blosc version:"<<version<<std::endl;
+        cd_values[4]=compressionlevel;
+        cd_values[5]=1;
+        cd_values[6]=BLOSC_BLOSCLZ;
+        prop.setFilter(FILTER_BLOSC,H5Z_FLAG_OPTIONAL,7,cd_values);
+        //else{
+        //    prop.setDeflate(compressionlevel);
+        //  }
     }
-
+    
     if(size > 0) { // Adjust for null-termination character
-	  size += 1;
-	}
-    Rcout<<"Checking data type"<<std::endl;
+      size += 1;
+    }
+//    Rcout<<"Checking data type"<<std::endl;
     DataType dsettype = GetDataType(GetTypechar(datatype), size);
-    Rcout<<"Creating  data set "<<datasetname.c_str()<<std::endl;
+  //  Rcout<<"Creating  data set "<<datasetname.c_str()<<std::endl;
     DataSet dataset = file->createDataSet(datasetname.c_str(),
-    		dsettype, dataspace, prop);
-
+                                          dsettype, dataspace, prop);
+    
     dsettype.close();
     prop.close();
     dataspace.close();
-    Rcout<<"Checking for errors"<<std::endl;
+//    Rcout<<"Checking for errors"<<std::endl;
     if (dataset.getId() == -1) {
-      Rcout<<"Dataset not created"<<std::endl;
+//      Rcout<<"Dataset not created"<<std::endl;
       dataset.close();
       throw Rcpp::exception("Creation of DataSet failed.");
     }
-    Rcout<<"No errors found!"<<std::endl;
+//    Rcout<<"No errors found!"<<std::endl;
     return XPtr<DataSet>(new DataSet(dataset));
   } catch(Exception& error) {
     string msg = error.getDetailMsg() + " in " + error.getFuncName();
@@ -153,6 +156,11 @@ XPtr<DataSet> CreateDataset(XPtr<CommonFG> file, string datasetname, char dataty
 // [[Rcpp::export]]
 XPtr<DataSet> OpenDataset(XPtr<CommonFG> file, string datasetname) {
   try {
+    char* version;
+    char* date;
+    int r=0;
+    r = register_blosc(&version,&date);
+
     DataSet *dataset = new DataSet(file->openDataSet(datasetname.c_str()));
     return XPtr<DataSet>(dataset);
   } catch(Exception& error) {
