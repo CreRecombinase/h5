@@ -237,7 +237,7 @@ CharacterVector GetDataSetCompression(XPtr<DataSet> dataset) {
       case (H5Z_filter_t)FILTER_BLOSC:
         outvec(i) = "H5Z_FILTER_BLOSC";
       default:
-        outvec(i) = to_string((int)filter_type);
+        outvec(i) = "H5Z_FILTER_UNKNOWN";
       }
   }
   return outvec;
