@@ -61,6 +61,10 @@ char GetDataSetType(XPtr<DataSet> dataset) {
 // [[Rcpp::export]]
 SEXP ReadDataset(XPtr<DataSet> dataset, XPtr<DataSpace> dataspace, NumericVector count) {
   try {
+    char* version;
+    char* date;
+    int r=0;
+    r = register_blosc(&version,&date);
     vector<hsize_t> count_t(count.begin(), count.end());
     Rcpp::XPtr<DataSpace> memspace(new DataSpace(count.length(), &count_t[0]));
     DataType dtype = dataset->getDataType();
